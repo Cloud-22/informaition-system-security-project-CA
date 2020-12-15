@@ -37,11 +37,11 @@ public class ConnectionHandler implements Runnable {
             } else {
                 Logger.log("Start Building Certificate");
                 CSR csr = this.connectionPolicy.unpack(data);
-                this.connectionPolicy.sign(csr);
+                Certificate certificate = new Certificate(csr);
+                this.connectionPolicy.sign(certificate);
                 // Add CA public key
-                String fullCertificateContent = csr.getSignedCertificate() + this.connectionPolicy.getClientPublicKey();
-                Certificate certificate = new Certificate(fullCertificateContent);
-                out.println(certificate.content);
+
+                out.println(certificate.toString());
             }
 
         } catch (Exception e) {

@@ -2,8 +2,7 @@ public class CSR {
     private String ip;
     private String phoneNumber;
     private String publicKey;
-    
-    private String signedCertificate;
+
 
     public CSR(String ip, String phoneNumber, String publicKey) {
         this.ip = ip;
@@ -20,11 +19,5 @@ public class CSR {
         return String.join("\0", temp);
     }
     
-    public void setSignedCertificate(String content) {
-        this.signedCertificate = content;
-    }
 
-    public String getSignedCertificate() {
-        return signedCertificate;
-    }
 }

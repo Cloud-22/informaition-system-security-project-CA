@@ -57,13 +57,15 @@ public class CaConnectionPolicy extends ConnectionPolicy {
     }
 
     @Override
-    public boolean sign(CSR csr) {
+    public boolean sign(Certificate certificate) {
         try {
+            CSR csr = certificate.getCsr();
             MessageDigest digest  =  MessageDigest.getInstance("SHA-256");
             byte[] contentDigestBytes = digest.digest(csr.toString().getBytes(StandardCharsets.UTF_8));
             String contentDigest = bytesToHex(contentDigestBytes);
             String signature = cryptographyMethod.encrypt(contentDigest);
-            csr.setSignedCertificate(signature);
+            System.out.println("this is my signature"+signature);
+            certificate.setSignature(signature);
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

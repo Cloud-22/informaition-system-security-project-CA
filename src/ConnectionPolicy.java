@@ -13,7 +13,7 @@ public abstract class ConnectionPolicy {
     public abstract boolean checkCSRContent(String csrPayload);
     public abstract CSR unpack(String csrPayload);
     public abstract boolean validate(CSR csr);
-    public abstract boolean sign(CSR csr);
+    public abstract boolean sign(Certificate certificate);
     public abstract String getClientPublicKey();
 
 //    public String generateKey(int keySize){
@@ -41,4 +41,5 @@ public abstract class ConnectionPolicy {
 //        srandom.nextBytes(iv);
 //        return Base64.getEncoder().encodeToString(iv);
 //    }
+
 }

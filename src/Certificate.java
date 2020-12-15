@@ -1,19 +1,36 @@
 public class Certificate {
-    String content;
+    private CSR csr;
+    private String signature;
 
-    public Certificate(String content) {
-        this.content = content;
+    public Certificate(CSR csr, String signature) {
+        this.csr = csr;
+        this.signature = signature;
+    }
+    public Certificate(CSR csr) {
+        this.csr = csr;
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        String [] temp = {this.csr.toString(),this.signature};
+        return String.join("\0",temp);
     }
 
-    public String getContent() {
-        return content;
+    public CSR getCsr() {
+        return csr;
     }
-    public void setContent(String content) {
-        this.content = content;
+
+    public void setCsr(CSR csr) {
+        this.csr = csr;
     }
+
+    public String getSignature() {
+        return this.signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+
 }
