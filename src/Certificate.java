@@ -13,7 +13,7 @@ public class Certificate {
     @Override
     public String toString() {
         String [] temp = {this.csr.toString(),this.signature};
-        return String.join("\0",temp);
+        return String.join("\0", temp);
     }
 
     public CSR getCsr() {
