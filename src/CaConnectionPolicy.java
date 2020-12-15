@@ -1,6 +1,13 @@
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.*;
 import java.util.Base64;
+import java.util.List;
 
 public class CaConnectionPolicy extends ConnectionPolicy {
 
@@ -9,13 +16,20 @@ public class CaConnectionPolicy extends ConnectionPolicy {
 
     @Override
     public void init() {
-        Pair<String, String> keys = this.generateKeyPair();
-        this.setPrivateKey(keys.getValue());
-        this.setPublicKey(keys.getKey());
-        this.cryptographyMethod = new CaConnectionMethod();
-        this.cryptographyMethod.init();
-        ((CaConnectionMethod)this.cryptographyMethod).setEncryptionKey(this.getPrivateKey());
-        ((CaConnectionMethod)this.cryptographyMethod).setDecryptionKey(this.getPublicKey());
+        try {
+            List<String> lines  = Files.readAllLines(Path.of("keys/keys.txt"));
+            this.setPublicKey(lines.get(0));
+            this.setPrivateKey(lines.get(1));
+            this.cryptographyMethod = new CaConnectionMethod();
+            this.cryptographyMethod.init();
+            ((CaConnectionMethod)this.cryptographyMethod).setEncryptionKey(this.getPrivateKey());
+            ((CaConnectionMethod)this.cryptographyMethod).setDecryptionKey(this.getPublicKey());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

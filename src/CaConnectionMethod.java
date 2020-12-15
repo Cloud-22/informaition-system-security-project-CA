@@ -24,7 +24,7 @@ public class CaConnectionMethod implements  ICryptographyMethod{
     public String encrypt(String data) {
         Logger.log("Encrypting asymmetrically...");
         try {
-            cipher.init(Cipher.ENCRYPT_MODE, loadPublicKey(this.encryptionKey));
+            cipher.init(Cipher.ENCRYPT_MODE, loadPrivateKey(this.encryptionKey));
             return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes()));
 
         } catch (Exception e) {

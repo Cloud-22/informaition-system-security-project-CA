@@ -27,14 +27,16 @@ public class ConnectionHandler implements Runnable {
             Scanner in = new Scanner(socket.getInputStream());
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             // Unpack CSR
-            if (!this.connectionPolicy.checkCSRContent(in.nextLine())) {
+
+            String data = in.nextLine();
+            if (!this.connectionPolicy.checkCSRContent(data)) {
 
                 Logger.log("Failed to validate CSR." + "\n");
                 return;
 
             } else {
                 Logger.log("Start Building Certificate");
-                CSR csr = this.connectionPolicy.unpack(in.nextLine());
+                CSR csr = this.connectionPolicy.unpack(data);
                 this.connectionPolicy.sign(csr);
                 // Add CA public key
                 String fullCertificateContent = csr.getSignedCertificate() + this.connectionPolicy.getClientPublicKey();
