@@ -1,11 +1,10 @@
 import javax.crypto.Cipher;
-import java.security.Key;
-import java.security.KeyFactory;
+import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-public class CaConnectionMethod implements  ICryptographyMethod{
+public class AsymmetricCryptographyMethod implements ICryptographyMethod {
     private String encryptionKey;
     private String decryptionKey;
     private Cipher cipher;
@@ -23,8 +22,19 @@ public class CaConnectionMethod implements  ICryptographyMethod{
     @Override
     public String encrypt(String data) {
         Logger.log("Encrypting asymmetrically...");
+        return this.encrypt(data, loadPublicKey(this.encryptionKey));
+    }
+
+    @Override
+    public String decrypt(String data) {
+        Logger.log("Decrypting asymmetrically...");
+        return this.decrypt(data, loadPrivateKey(this.decryptionKey));
+    }
+
+    @Override
+    public String encrypt(String data, Key key) {
         try {
-            cipher.init(Cipher.ENCRYPT_MODE, loadPrivateKey(this.encryptionKey));
+            cipher.init(Cipher.ENCRYPT_MODE, key);
             return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes()));
 
         } catch (Exception e) {
@@ -34,10 +44,9 @@ public class CaConnectionMethod implements  ICryptographyMethod{
     }
 
     @Override
-    public String decrypt(String data) {
-        Logger.log("Decrypting asymmetrically...");
+    public String decrypt(String data, Key key) {
         try {
-            cipher.init(Cipher.DECRYPT_MODE, loadPrivateKey(this.decryptionKey));
+            cipher.init(Cipher.DECRYPT_MODE, key);
 
             return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
 
@@ -54,7 +63,8 @@ public class CaConnectionMethod implements  ICryptographyMethod{
             KeyFactory fact = KeyFactory.getInstance("RSA");
             return fact.generatePublic(spec);
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            Logger.log(e.getMessage());
         }
         return null;
     }
@@ -66,7 +76,8 @@ public class CaConnectionMethod implements  ICryptographyMethod{
             KeyFactory fact = KeyFactory.getInstance("RSA");
             return fact.generatePrivate(spec);
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            Logger.log(e.getMessage());
         }
         return null;
     }

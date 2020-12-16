@@ -15,6 +15,7 @@ public class Logger {
     private static ArrayList<String> logs;
     
     public static void start() {
+        Logger.log("");
         if (fileLogs) {
             ScheduledExecutorService executor =
                     Executors.newSingleThreadScheduledExecutor();

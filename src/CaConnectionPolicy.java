@@ -1,7 +1,4 @@
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,18 +13,18 @@ public class CaConnectionPolicy extends ConnectionPolicy {
 
     @Override
     public void init() {
+        Logger.log("Initializing asymmetric connection...");
         try {
             List<String> lines  = Files.readAllLines(Path.of("keys/keys.txt"));
             this.setPublicKey(lines.get(0));
             this.setPrivateKey(lines.get(1));
-            this.cryptographyMethod = new CaConnectionMethod();
+            this.cryptographyMethod = new AsymmetricCryptographyMethod();
             this.cryptographyMethod.init();
-            ((CaConnectionMethod)this.cryptographyMethod).setEncryptionKey(this.getPrivateKey());
-            ((CaConnectionMethod)this.cryptographyMethod).setDecryptionKey(this.getPublicKey());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            ((AsymmetricCryptographyMethod)this.cryptographyMethod).setEncryptionKey(this.getPrivateKey());
+            ((AsymmetricCryptographyMethod)this.cryptographyMethod).setDecryptionKey(this.getPublicKey());
+
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.log(e.getMessage());
         }
 
     }
@@ -39,7 +36,7 @@ public class CaConnectionPolicy extends ConnectionPolicy {
         // Index 2 ==> PublicKey
         if (csrPayload != null) {
             String[] tempPayload = csrPayload.split("\0");
-            return tempPayload[0] != null && tempPayload[1] != null  && tempPayload[2] != null ;
+            return tempPayload[0] != null && tempPayload[1] != null  && tempPayload[2] != null;
         }
         return false;
     }
@@ -58,17 +55,19 @@ public class CaConnectionPolicy extends ConnectionPolicy {
 
     @Override
     public boolean sign(Certificate certificate) {
+        Logger.log("Signing certificate...");
         try {
             CSR csr = certificate.getCsr();
             MessageDigest digest  =  MessageDigest.getInstance("SHA-256");
             byte[] contentDigestBytes = digest.digest(csr.toString().getBytes(StandardCharsets.UTF_8));
             String contentDigest = bytesToHex(contentDigestBytes);
-            String signature = cryptographyMethod.encrypt(contentDigest);
-            System.out.println("this is my signature"+signature);
+            String signature = cryptographyMethod.encrypt(
+                    contentDigest, AsymmetricCryptographyMethod.loadPrivateKey(privateKey)
+            );
             certificate.setSignature(signature);
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Logger.log(e.getMessage());
         }
         return true;
     }

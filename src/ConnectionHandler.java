@@ -17,12 +17,11 @@ public class ConnectionHandler implements Runnable {
         this.data = "";
         this.socket = socket;
         this.connectionPolicy = connectionPolicy;
-//        this.connectionPolicy.init();
+        this.connectionPolicy.init();
     }
 
     @Override
     public void run() {
-        Logger.log("Connected: " + socket);
         try {
             Scanner in = new Scanner(socket.getInputStream());
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -35,7 +34,6 @@ public class ConnectionHandler implements Runnable {
                 return;
 
             } else {
-                Logger.log("Start Building Certificate");
                 CSR csr = this.connectionPolicy.unpack(data);
                 Certificate certificate = new Certificate(csr);
                 this.connectionPolicy.sign(certificate);
@@ -45,15 +43,15 @@ public class ConnectionHandler implements Runnable {
             }
 
         } catch (Exception e) {
-            Logger.log("Error: " + socket + "\n");
+            Logger.log("Connection error");
             e.printStackTrace();
         } finally {
             try {
                 socket.close();
-                Logger.log("Closed: " + socket + "\n");
+                Logger.log("Connection terminated.\n");
                 
             } catch (IOException e) {
-                Logger.log("Failed to close socket.\n");
+                Logger.log("Connection termination failed.\n");
             }
         }
     }

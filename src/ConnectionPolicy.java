@@ -16,30 +16,4 @@ public abstract class ConnectionPolicy {
     public abstract boolean sign(Certificate certificate);
     public abstract String getClientPublicKey();
 
-//    public String generateKey(int keySize){
-//        Logger.log("Generating key...");
-//        KeyGenerator gen;
-//        String SK = "";
-//        try {
-//            gen = KeyGenerator.getInstance("AES");
-//            gen.init(keySize); /* 128-bit AES */
-//            SecretKey secretKey = gen.generateKey();
-//            byte[] bytes = secretKey.getEncoded();
-//            SK = String.format("%032X", new BigInteger(+1, bytes));
-//
-//
-//        } catch (NoSuchAlgorithmException e) {
-//            Logger.log(e.getMessage());
-//        }
-//        return SK;
-//    }
-//
-//    public String generateIV() {
-//        Logger.log("Generating initial vector...");
-//        byte[] iv = new byte[128/8];
-//        SecureRandom srandom = new SecureRandom();
-//        srandom.nextBytes(iv);
-//        return Base64.getEncoder().encodeToString(iv);
-//    }
-
 }

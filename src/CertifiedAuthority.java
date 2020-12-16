@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -9,14 +10,14 @@ public class CertifiedAuthority {
     public static void main(String[] args) throws IOException {
         Logger.start();
         try (ServerSocket listener = new ServerSocket(22222)) {
-            Logger.log("The CA is running...");
+            Logger.log("The CA is running...\n");
             // Generate Public, Private Keys
-            CaConnectionPolicy caConnectionPolicy = new CaConnectionPolicy();
-            caConnectionPolicy.init();
             ExecutorService pool = Executors.newFixedThreadPool(20);
             while (true) {
-//                ConnectionPolicy connectionPolicy = new HybridConnectionPolicy();
-                pool.execute(new ConnectionHandler(listener.accept(), caConnectionPolicy));
+                Socket socket = listener.accept();
+                Logger.log("Connection accepted.");
+                CaConnectionPolicy caConnectionPolicy = new CaConnectionPolicy();
+                pool.execute(new ConnectionHandler(socket, caConnectionPolicy));
             }
         }
     }
